@@ -1,0 +1,360 @@
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Program Files\Keil5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\L
+                    -istings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Nixie.h"
+   3          #include "Delay.h"
+   4          #include "Key.h"
+   5          #include "Timer0.h"
+   6          #include "MatrixKey.h"
+   7          
+   8          #define vain 24
+   9          
+  10          #define minus  20
+  11          #define letter_H 21
+  12          #define letter_E 22
+  13          #define letter_L 23
+  14          #define letter_r 25
+  15          
+  16          
+  17          unsigned char MatrixKeyNum,KeyNum,ShowNum,Err,i,Zero,NixieShowSelect,End,FloatSymbol,MinusNumSymbol,FloatS
+             -elect,Omod;
+  18          unsigned long in,m;
+  19          double ONum,Result;
+  20          unsigned char FloatNum[]={10,11,12,13,14,15,16,17,18,19};
+  21          
+  22          unsigned char MatrixKeyNumMeaning[]={      vain,
+  23                                               7,8,9,vain,
+  24                                               4,5,6,vain,
+  25                                               1,2,3,vain,
+  26                                               0,    vain,vain,vain};//MatrixKeyNumMeaning[MatrixKeyNum]如此，可以解释矩阵按键代表的意
+             -思
+  27          unsigned char NixieShow[]={vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain,vain
+             -,vain};
+  28          
+  29          void NixieShowCls()
+  30          {
+  31   1        for(i=0;i<9;i++)
+  32   1        {
+  33   2            NixieShow[i]=vain;
+  34   2            NixieShowSelect=0;
+  35   2        }
+  36   1      }
+  37          
+  38          
+  39          void NixieNuminput(unsigned char Data)
+  40          {
+  41   1        if(NixieShowSelect<8 && FloatSymbol!=1)
+  42   1        {
+  43   2          NixieShowSelect++;
+  44   2          NixieShow[NixieShowSelect+8]=Data;
+  45   2        }
+  46   1        if(NixieShowSelect<8 && FloatSymbol==1)
+  47   1        {
+  48   2      //    NixieShowSelect++;
+  49   2          NixieShow[NixieShowSelect+8]=Data;
+  50   2          FloatSymbol=2;
+  51   2        }
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 2   
+
+  52   1        
+  53   1        
+  54   1      }
+  55          
+  56          void main()
+  57          {
+  58   1        
+  59   1        Timer0Init();
+  60   1        NixieNuminput(letter_H);
+  61   1        NixieNuminput(letter_E);
+  62   1        NixieNuminput(letter_L);
+  63   1        NixieNuminput(letter_L);
+  64   1        NixieNuminput(0);
+  65   1        Delay(300);
+  66   1              NixieShowCls();
+  67   1              ONum=0;
+  68   1              End=0;
+  69   1              Err=0;
+  70   1        NixieNuminput(minus);
+  71   1          Delay(50);
+  72   1        NixieNuminput(minus);
+  73   1          Delay(50);
+  74   1        NixieNuminput(minus);
+  75   1          Delay(50);
+  76   1        NixieNuminput(minus);
+  77   1          Delay(50);
+  78   1        NixieNuminput(minus);
+  79   1          Delay(50);
+  80   1        NixieNuminput(minus);
+  81   1          Delay(50);
+  82   1        NixieNuminput(minus);
+  83   1          Delay(50);
+  84   1        NixieNuminput(minus);
+  85   1          Delay(50);
+  86   1                    NixieShowCls();
+  87   1              ONum=0;
+  88   1              End=0;
+  89   1              Err=0;
+  90   1      
+  91   1      
+  92   1      
+  93   1      
+  94   1        
+  95   1        while(1)
+  96   1        {
+  97   2          
+  98   2          KeyNum=Key();
+  99   2          if(KeyNum==1)
+ 100   2          {
+ 101   3            NixieShowCls();
+ 102   3            ONum=0;
+ 103   3            FloatSymbol=0;
+ 104   3            MinusNumSymbol=0;
+ 105   3            Err=0;
+ 106   3            Zero=0;
+ 107   3      
+ 108   3      
+ 109   3          }
+ 110   2          
+ 111   2          MatrixKeyNum=MatrixKey();//获取矩阵按键的输入
+ 112   2          if(MatrixKeyNum)
+ 113   2          {
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 3   
+
+ 114   3            if(End==1)
+ 115   3            {
+ 116   4              NixieShowCls();
+ 117   4              ONum=0;
+ 118   4              End=0;
+ 119   4              Err=0;
+ 120   4              Zero=0;
+ 121   4            }
+ 122   3            for(i=1;i<10;i++)
+ 123   3            {
+ 124   4              if(MatrixKeyNumMeaning[MatrixKeyNum]==i&&Zero!=1)
+ 125   4              {
+ 126   5                NixieNuminput(i);
+ 127   5                ONum*=10;
+ 128   5                ONum+=MatrixKeyNumMeaning[MatrixKeyNum];
+ 129   5                if(MinusNumSymbol==1){MinusNumSymbol=2;}
+ 130   5                Zero=0;
+ 131   5              }
+ 132   4              
+ 133   4            }
+ 134   3                  if(MatrixKeyNumMeaning[MatrixKeyNum]==0&&Zero!=1)
+ 135   3              {
+ 136   4                NixieNuminput(0);
+ 137   4                ONum*=10;
+ 138   4                ONum+=MatrixKeyNumMeaning[MatrixKeyNum];
+ 139   4                if(MinusNumSymbol==1){MinusNumSymbol=2;}
+ 140   4                if(NixieShowSelect==1){Zero=1;}
+ 141   4                if(MinusNumSymbol==2&&NixieShowSelect==2){Zero=1;}
+ 142   4              }
+ 143   3      
+ 144   3            
+ 145   3            if(MatrixKeyNum==14&&FloatSymbol!=2&&NixieShowSelect!=0)
+ 146   3            {         
+ 147   4              FloatSymbol=1;
+ 148   4              NixieNuminput(FloatNum[NixieShow[NixieShowSelect+8]]);
+ 149   4              FloatSelect=NixieShowSelect;
+ 150   4                      Zero=0;
+ 151   4      
+ 152   4            }
+ 153   3            if(MatrixKeyNum==12&&MinusNumSymbol!=2&&NixieShowSelect==0)
+ 154   3            {
+ 155   4                      if(End==1)
+ 156   4              {       
+ 157   5              NixieShowCls();
+ 158   5              ONum=0;
+ 159   5              End=0;
+ 160   5              Err=0;
+ 161   5              Zero=0;
+ 162   5                }
+ 163   4      
+ 164   4              MinusNumSymbol=1;
+ 165   4              NixieNuminput(minus);
+ 166   4      
+ 167   4            }
+ 168   3            
+ 169   3            
+ 170   3            
+ 171   3            if(MatrixKeyNum==4||MatrixKeyNum==8||MatrixKeyNum==12||MatrixKeyNum==16&&NixieShowSelect!=0)
+ 172   3      
+ 173   3            {
+ 174   4              if(FloatSymbol!=1&&MinusNumSymbol!=1&&Omod!=4&&Omod!=8&&Omod!=12&&Omod!=16)
+ 175   4              {
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 4   
+
+ 176   5                
+ 177   5      
+ 178   5                    if(FloatSymbol==2)
+ 179   5                    {
+ 180   6                    
+ 181   6                      for(i=0;i<NixieShowSelect-FloatSelect;i++)
+ 182   6                      {
+ 183   7                        ONum*=0.1;
+ 184   7                        FloatSymbol=0;
+ 185   7                      }
+ 186   6                    }
+ 187   5                  if(MinusNumSymbol==2)
+ 188   5                  {
+ 189   6                    ONum*=-1;
+ 190   6                      MinusNumSymbol=0;
+ 191   6                  }
+ 192   5                        Result=ONum;
+ 193   5                        End=1;
+ 194   5                      for(i=0;i<9;i++)
+ 195   5                    {
+ 196   6                      NixieShow[i]=vain;
+ 197   6                    }
+ 198   5      
+ 199   5                
+ 200   5              }
+ 201   4            }
+ 202   3            
+ 203   3            switch(MatrixKeyNum)
+ 204   3            {
+ 205   4              case 4:if(FloatSymbol!=1&&MinusNumSymbol!=1&&NixieShowSelect!=0&&Omod==0){Omod=4;}break;
+ 206   4              case 8:if(FloatSymbol!=1&&MinusNumSymbol!=1&&NixieShowSelect!=0&&Omod==0){Omod=8;}break;
+ 207   4              case 12:if(FloatSymbol!=1&&MinusNumSymbol!=1&&NixieShowSelect!=0&&Omod==0){Omod=12;}break;
+ 208   4              case 16:if(FloatSymbol!=1&&MinusNumSymbol!=1&&NixieShowSelect!=0&&Omod==0){Omod=16;}break;
+ 209   4      
+ 210   4            }
+ 211   3            if(MatrixKeyNum==15&&Omod!=0&&FloatSymbol!=1&&MinusNumSymbol!=1&&NixieShowSelect!=0)
+ 212   3            {
+ 213   4              
+ 214   4              
+ 215   4            if(FloatSymbol==2)
+ 216   4              {
+ 217   5              
+ 218   5                for(i=0;i<NixieShowSelect-FloatSelect;i++)//
+ 219   5                {
+ 220   6                  ONum*=0.1;
+ 221   6                }
+ 222   5              }
+ 223   4            if(MinusNumSymbol==2)
+ 224   4            {
+ 225   5              ONum*=-1;
+ 226   5            }
+ 227   4      
+ 228   4              
+ 229   4              switch(Omod)
+ 230   4              {
+ 231   5                case 4:if(ONum!=0){Result=Result/ONum;Omod=0;}else{Err=1;}break;
+ 232   5                case 8:Result=Result*ONum;Omod=0;break;
+ 233   5                case 12:Result=Result-ONum;Omod=0;break;
+ 234   5                case 16:Result=Result+ONum;Omod=0;break;
+ 235   5              }
+ 236   4              if(Err==0)
+ 237   4              {
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 5   
+
+ 238   5                NixieShowCls();
+ 239   5              if(Result<0)
+ 240   5              {
+ 241   6                NixieNuminput(minus);
+ 242   6                Result*=-1;
+ 243   6              }
+ 244   5      
+ 245   5              in=Result;
+ 246   5              
+ 247   5            //  NixieNuminput(in);
+ 248   5              m=in/10000000%10;
+ 249   5              if(in>=10000000){NixieNuminput(m);}
+ 250   5              m=in/1000000%10;
+ 251   5              if(in>=1000000){NixieNuminput(m);}
+ 252   5              m=in/100000%10;
+ 253   5              if(in>=100000){NixieNuminput(m);}
+ 254   5              m=in/10000%10;
+ 255   5              if(in>=10000){NixieNuminput(m);}
+ 256   5              m=in/1000%10;
+ 257   5              if(in>=1000){NixieNuminput(m);}
+ 258   5              m=in/100%10;
+ 259   5              if(in>=100){NixieNuminput(m);}
+ 260   5              m=in/10%10;
+ 261   5              if(in>=10){NixieNuminput(m);}
+ 262   5              m=in/1%10;
+ 263   5              if(in>=1){NixieNuminput(m);}
+ 264   5              if(in<=1&&m==0){NixieNuminput(m);}
+ 265   5              in=Result*100;
+ 266   5              m=in%100;
+ 267   5              if(m>=1){NixieShowSelect--;in=Result;m=in/1%10;NixieNuminput(FloatNum[m]);in=Result*10;m=in%10;NixieNu
+             -minput(m);}
+ 268   5              in=Result*100;
+ 269   5              m=in%10;
+ 270   5              if(m>=1){NixieNuminput(m);}
+ 271   5              
+ 272   5      
+ 273   5              
+ 274   5      
+ 275   5              
+ 276   5              
+ 277   5              End=1;
+ 278   5              FloatSymbol=0;
+ 279   5              MinusNumSymbol=0;
+ 280   5            }
+ 281   4              else if(Err==1)
+ 282   4              {
+ 283   5                NixieShowCls();
+ 284   5               NixieNuminput(letter_E);
+ 285   5               NixieNuminput(letter_r);
+ 286   5               NixieNuminput(letter_r);
+ 287   5      
+ 288   5              }
+ 289   4      
+ 290   4              
+ 291   4              
+ 292   4            }
+ 293   3            
+ 294   3            
+ 295   3            
+ 296   3                  
+ 297   3                  
+ 298   3          }
+C51 COMPILER V9.54   MAIN                                                                  10/27/2023 12:17:26 PAGE 6   
+
+ 299   2        }
+ 300   1      }
+ 301          
+ 302          void Timer_Routine()  interrupt 1
+ 303          {
+ 304   1        static unsigned int T0Count;
+ 305   1        TH0=0xFC;  //重新设置定时初始值
+ 306   1        TL0=0x66;   
+ 307   1        T0Count++;
+ 308   1        if(T0Count>=5)
+ 309   1        {
+ 310   2          T0Count=0;
+ 311   2          Nixie(1,NixieShow[1+NixieShowSelect]);
+ 312   2          Nixie(2,NixieShow[2+NixieShowSelect]);
+ 313   2          Nixie(3,NixieShow[3+NixieShowSelect]);
+ 314   2          Nixie(4,NixieShow[4+NixieShowSelect]);
+ 315   2          Nixie(5,NixieShow[5+NixieShowSelect]);
+ 316   2          Nixie(6,NixieShow[6+NixieShowSelect]);
+ 317   2          Nixie(7,NixieShow[7+NixieShowSelect]);
+ 318   2          Nixie(8,NixieShow[8+NixieShowSelect]);
+ 319   2        }
+ 320   1      }
+ 321          
+ 322          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2327    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     74    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
